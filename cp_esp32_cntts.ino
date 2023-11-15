@@ -14,91 +14,88 @@ HardwareSerial cntts(2);  //Serial port 2
 
 
 void test() {
-  const char* text = "你好CPIOT世界";            /* 注意：当前文件的编码格式为UTF-8 */
-	uint32_t utf8Size, unicodeSize, gbkSize;
-	uint8_t utf8[64];
-	uint8_t unicode[64];
-	uint8_t gbk[64];
+  const char *text = "你好CPIOT世界"; /* 注意：当前文件的编码格式为UTF-8 */
+  uint32_t utf8Size, unicodeSize, gbkSize;
+  uint8_t utf8[64];
+  uint8_t unicode[64];
+  uint8_t gbk[64];
 
-	//
-	// 打印原始数据：本文件是UTF-8编码的
-	//
-	Serial.printf(" ------ byte array in UTF8 format: ");
-	for(int i = 0; i < strlen(text); i++)
-	{
-		Serial.printf("0x%02X,", text[i] & 0XFF);
-	}
-	Serial.printf("\n");
+  //
+  // 打印原始数据：本文件是UTF-8编码的
+  //
+  Serial.printf(" ------ byte array in UTF8 format: ");
+  for (int i = 0; i < strlen(text); i++) {
+    Serial.printf("0x%02X,", text[i] & 0XFF);
+  }
+  Serial.printf("\n");
 
-	//
-	// UTF8转UNICODE
-	//
-	Serial.printf(" ------ utf8 to unicode : ");
-	utf8ToUnicode((const uint8_t *)text, strlen(text), unicode, &unicodeSize);
-	for(int i = 0; i < unicodeSize; i++)
-	{
-		Serial.printf("0x%02X,", unicode[i] & 0XFF);
-	}
-	Serial.printf("\n");
+  //
+  // UTF8转UNICODE
+  //
+  Serial.printf(" ------ utf8 to unicode : ");
+  utf8ToUnicode((const uint8_t *)text, strlen(text), unicode, &unicodeSize);
+  for (int i = 0; i < unicodeSize; i++) {
+    Serial.printf("0x%02X,", unicode[i] & 0XFF);
+  }
+  Serial.printf("\n");
 #if 1
-	//
-	// UTF8转GBK
-	//
-	UTF8ToGBK((const uint8_t *)text, strlen(text), gbk, &gbkSize);
-	printf(" ------ utf8 to gbk     : ");
-	for(int i = 0; i < gbkSize; i++)
-	{
-		printf("0x%02X,", gbk[i] & 0XFF);
-	}
-	printf("\n");
+  //
+  // UTF8转GBK
+  //
+  UTF8ToGBK((const uint8_t *)text, strlen(text), gbk, &gbkSize);
+  printf(" ------ utf8 to gbk     : ");
+  for (int i = 0; i < gbkSize; i++) {
+    printf("0x%02X,", gbk[i] & 0XFF);
+  }
+  printf("\n");
 
+  Serial.println("测试");
+  cntts.println((const char *)gbk);
+  updateSerial();
+
+#if 0
+  //
+  // GBK转UNICODE
+  //
+  Serial.printf(" ------ gbk  to unicode : ");
+  GBKToUnicode((const uint8_t *)gbk, gbkSize, unicode, &unicodeSize);
+  for (int i = 0; i < unicodeSize; i++) {
+    Serial.printf("0x%02X,", unicode[i] & 0XFF);
+  }
+  Serial.printf("\n");
+
+  //
+  // GBK转UTF8
+  //
+  GBKToUTF8(gbk, gbkSize, utf8, &utf8Size);
+  Serial.printf(" ------ gbk  to utf8    : ");
+  for (int i = 0; i < utf8Size; i++) {
+    Serial.printf("0x%02X,", utf8[i] & 0XFF);
+  }
+  Serial.printf("\n");
+
+  //
+  // UNICODE转UTF8
+  //
+  UnicodeToUTF8(unicode, unicodeSize, utf8, &utf8Size);
+  Serial.printf(" ------ unicode to utf8 : ");
+  for (int i = 0; i < utf8Size; i++) {
+    Serial.printf("0x%02X,", utf8[i] & 0XFF);
+  }
+  Serial.printf("\n");
+
+  //
+  // unicode转gbk
+  //
+  UnicodeToGBK(unicode, unicodeSize, gbk, &gbkSize);
+  Serial.printf(" ------ unicode to gbk  : ");
+  for (int i = 0; i < gbkSize; i++) {
+    Serial.printf("0x%02X,", gbk[i] & 0XFF);
+  }
+  Serial.printf("\n");
   Serial.println("测试");
   cntts.println((const char*)gbk);
   updateSerial();
-
-	//
-	// GBK转UNICODE
-	//
-	Serial.printf(" ------ gbk  to unicode : ");
-	GBKToUnicode((const uint8_t *)gbk, gbkSize, unicode, &unicodeSize);
-	for(int i = 0; i < unicodeSize; i++)
-	{
-		Serial.printf("0x%02X,", unicode[i] & 0XFF);
-	}
-	Serial.printf("\n");
-
-	//
-	// GBK转UTF8
-	//
-	GBKToUTF8(gbk, gbkSize, utf8, &utf8Size);
-	Serial.printf(" ------ gbk  to utf8    : ");
-	for(int i = 0; i < utf8Size; i++)
-	{
-		Serial.printf("0x%02X,", utf8[i] & 0XFF);
-	}
-	Serial.printf("\n");
-
-	//
-	// UNICODE转UTF8
-	//
-	UnicodeToUTF8(unicode, unicodeSize, utf8, &utf8Size);
-	Serial.printf(" ------ unicode to utf8 : ");
-	for(int i = 0; i < utf8Size; i++)
-	{
-		Serial.printf("0x%02X,", utf8[i] & 0XFF);
-	}
-	Serial.printf("\n");
-
-	//
-	// unicode转gbk
-	//
-	UnicodeToGBK(unicode, unicodeSize, gbk, &gbkSize);
-	Serial.printf(" ------ unicode to gbk  : ");
-	for(int i = 0; i < gbkSize; i++)
-	{
-		Serial.printf("0x%02X,", gbk[i] & 0XFF);
-	}
-	Serial.printf("\n");
 
 	//
 	// HEX转STR
@@ -115,6 +112,7 @@ void test() {
 	//
 	StrToHex(str, strSize, hex, &hexSize);
 	Serial.printf(" ------ STR TO HEX: 0x%02X,0x%02X,0x%02X \n", hex[0], hex[1], hex[2]);
+#endif
 #endif
 }
 
